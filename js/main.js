@@ -24,7 +24,7 @@ $(document).ready(function () {
         lat: lat + latOffset,
         lng: lng + lngOffset,
         description: `Descripción breve del ${category} número ${i + 1}. Un lugar excelente para visitar en San Cris.`,
-        image: `https://source.unsplash.com/random/300x200?sig=${i}&${category}` // Placeholder
+        image: `https://loremflickr.com/320/240/${category},san-cristobal?random=${i}` // Random image by category
       });
     }
     return places;
@@ -184,7 +184,7 @@ $(document).ready(function () {
 
     const container = $('#cards-container');
     container.empty();
-    $('#result-count').text(places.length);
+    $('#result-count-desktop').text(places.length);
 
     if (places.length === 0) {
       container.append('<div class="p-4 text-center text-slate-500">No se encontraron lugares en esta categoría.</div>');
@@ -230,15 +230,22 @@ $(document).ready(function () {
 
       // Add Card to List
       const card = `
-                <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-100 hover:shadow-md transition-shadow cursor-pointer card-item" data-id="${place.id}">
+                <div class="flex-shrink-0 w-[85vw] md:w-full bg-white p-4 rounded-xl shadow-lg md:shadow-sm border border-slate-200 md:border-slate-100 hover:shadow-xl transition-all cursor-pointer card-item snap-center" data-id="${place.id}">
                     <div class="flex gap-4">
-                        <div class="w-20 h-20 bg-slate-200 rounded-md overflow-hidden flex-shrink-0">
-                            <img src="https://placehold.co/100x100?text=${place.category}" alt="${place.name}" class="w-full h-full object-cover">
+                        <div class="w-24 h-24 bg-slate-200 rounded-lg overflow-hidden flex-shrink-0 relative">
+                            <img src="${place.image}" alt="${place.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         </div>
-                        <div>
-                            <h4 class="font-bold text-brand-blue">${place.name}</h4>
-                            <span class="text-xs font-semibold px-2 py-1 rounded-full bg-slate-100 text-slate-600 uppercase">${place.category}</span>
-                            <p class="text-sm text-slate-500 mt-2 line-clamp-2">${place.description}</p>
+                        <div class="flex-grow min-w-0">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-brand-blue truncate pr-2">${place.name}</h4>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 uppercase tracking-wide border border-slate-200">${place.category}</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">${place.description}</p>
+                            <div class="mt-2 flex items-center text-xs text-brand-gold font-medium">
+                                <span>★ 4.8</span>
+                                <span class="mx-1 text-slate-300">•</span>
+                                <span class="text-slate-400">Abierto ahora</span>
+                            </div>
                         </div>
                     </div>
                 </div>

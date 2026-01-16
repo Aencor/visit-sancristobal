@@ -130,27 +130,41 @@
             </div>
         </header>
 
-        <div class="flex flex-col-reverse md:flex-row flex-grow overflow-hidden relative z-0">
-            <!-- Cards List (Side Panel) -->
-            <div class="w-full md:w-96 flex-shrink-0 flex flex-col bg-white border-r border-slate-200 shadow-xl z-20">
+        <div class="flex-grow relative overflow-hidden flex flex-col md:flex-row h-[calc(100vh-140px)] md:h-[calc(100vh-80px)]">
+            
+            <!-- Map Container (Mobile: Full Screen Background, Desktop: Right Panel) -->
+            <div class="absolute inset-0 md:relative md:flex-grow md:w-auto z-0 bg-slate-100">
+                <div id="map" class="h-full w-full"></div>
+                <!-- Loading Overlay -->
+                <div id="map-loader" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-[1000] flex flex-col items-center justify-center hidden">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-blue mb-4"></div>
+                    <p class="text-brand-blue font-medium animate-pulse">Obteniendo tu ubicación...</p>
+                </div>
+            </div>
+
+            <!-- Cards List (Mobile: Bottom Carousel, Desktop: Left Sidebar) -->
+            <div class="absolute bottom-0 left-0 right-0 md:relative md:w-96 md:h-full z-10 pointer-events-none md:pointer-events-auto flex flex-col md:bg-white md:border-r md:border-slate-200 md:shadow-xl">
                 
+                <!-- Desktop Header for List (Hidden on Mobile) -->
+                <div class="hidden md:flex justify-between items-center p-4 bg-white border-b border-slate-100">
+                    <h3 class="text-lg font-bold text-slate-800">Resultados (<span id="result-count-desktop">0</span>)</h3>
+                    <span class="text-xs text-slate-400">Radio de 2km</span>
+                </div>
+
                 <!-- Scrollable Content -->
-                <div class="flex-grow overflow-y-auto p-4" id="results-panel">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-bold text-slate-800">Resultados (<span id="result-count">0</span>)</h3>
-                        <span class="text-xs text-slate-400">Radio de 2km</span>
-                    </div>
-                    <div id="cards-container" class="space-y-4">
+                <div class="w-full md:flex-grow md:overflow-y-auto p-4 pointer-events-auto">
+                    <!-- Mobile: Horizontal Scroll, Desktop: Vertical Stack -->
+                    <div id="cards-container" class="flex md:flex-col gap-4 overflow-x-auto md:overflow-visible snap-x snap-mandatory hide-scrollbar pb-4 md:pb-0">
                         <!-- Cards will be injected here -->
-                        <div class="p-8 text-center text-slate-400 flex flex-col items-center">
+                        <div class="hidden md:block p-8 text-center text-slate-400">
                             <div class="animate-pulse mb-2">🔍</div>
                              Realiza una búsqueda...
                         </div>
                     </div>
                 </div>
 
-                <!-- Footer -->
-                <footer class="bg-slate-50 p-4 border-t border-slate-200 text-xs text-slate-500">
+                <!-- Footer (Hidden on Mobile Carousel to save space) -->
+                <footer class="hidden md:block bg-slate-50 p-4 border-t border-slate-200 text-xs text-slate-500">
                     <div class="flex flex-col gap-2 text-center">
                         <div class="flex justify-center gap-4">
                             <a href="#" class="hover:text-brand-blue transition-colors">Política de Privacidad</a>
@@ -166,10 +180,7 @@
                     </div>
                 </footer>
             </div>
-            
-            <!-- Map Container -->
-            <div class="flex-grow h-1/2 md:h-auto relative">
-                <div id="map" class="h-full w-full"></div>
+        </div>
                 <!-- Loading Overlay -->
                 <div id="map-loader" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-[1000] flex flex-col items-center justify-center hidden">
                     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-blue mb-4"></div>
