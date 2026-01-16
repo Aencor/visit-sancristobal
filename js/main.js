@@ -125,14 +125,23 @@ $(document).ready(function () {
         $("#map-loader").addClass('hidden');
         console.error("Error getting location: ", error);
 
-        // Default to San Cristobal de las Casas if geo fails or denied
+        let msg = "No pudimos obtener tu ubicación.";
+        if (error.code === error.TIMEOUT) msg = "La solicitud de ubicación tardó demasiado.";
+        if (error.code === error.PERMISSION_DENIED) msg = "Permiso de ubicación denegado.";
+
+        // Default to San Cristobal de las Casas
         // San Cris Coords: 16.7370, -92.6376
         userPosition = { lat: 16.7371, lng: -92.6376 };
-        alert("No pudimos obtener tu ubicación, mostrando San Cristóbal de las Casas por defecto.");
+        alert(`${msg} Mostrando San Cristóbal de las Casas por defecto.`);
 
         renderMap(userPosition);
         allPlaces = generateMockPlaces(userPosition.lat, userPosition.lng);
         renderPlaces(allPlaces);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
       }
     );
   }
