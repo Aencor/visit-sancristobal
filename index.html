@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visita San Cris - Directorio Turístico</title>
+    <!-- Tailwind CSS Output (Commented out due to build env issues, using CDN for demo) -->
+    <!-- <link href="./css/output.css" rel="stylesheet"> -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-blue': '#1e3a8a',
+                        'brand-gold': '#d97706',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRSq550=" crossorigin="" />
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        #map { height: 100%; width: 100%; z-index: 10; }
+        .hidden-section { display: none; opacity: 0; }
+        /* Hide scrollbar for category filter on mobile */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Custom Marker Fixes */
+        .leaflet-div-icon {
+            background: transparent;
+            border: none;
+        }
+        .custom-marker {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 overflow-x-hidden">
+
+    <!-- Landing Section -->
+    <div id="landing-section" class="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden bg-brand-blue/5">
+        
+        <!-- Logo -->
+        <div class="mb-8 w-48 md:w-64 relative z-20">
+            <img src="./assets/logo.jpg" alt="Visita San Cris Logo" class="w-full h-auto drop-shadow-xl rounded-full">
+        </div>
+
+        <!-- Search Container -->
+        <div class="w-full max-w-2xl text-center z-50 px-4 relative">
+            <h1 class="text-3xl md:text-5xl font-bold mb-8 text-brand-blue tracking-tight">¿Qué estás buscando?</h1>
+            
+            <div class="relative group">
+                <input type="text" id="main-search" placeholder="Restaurantes, Parques, Museos..." 
+                    class="w-full p-4 md:p-6 rounded-full text-lg shadow-2xl border-2 border-slate-300 focus:border-brand-gold focus:outline-none transition-all duration-300 pr-16 bg-white text-slate-800 placeholder-slate-400 relative z-50">
+                
+                <button id="search-btn" class="absolute right-2 top-2 bottom-2 bg-brand-blue text-white p-3 md:p-4 rounded-full hover:bg-blue-800 transition-colors duration-300 flex items-center justify-center aspect-square shadow-md z-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </button>
+            </div>
+            <p class="mt-4 text-slate-500 text-sm md:text-base font-medium relative z-50">Explora San Cristóbal de las Casas a tu alrededor.</p>
+        </div>
+
+        <!-- Decorative Background Elements -->
+        <div class="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
+            <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+            <div class="absolute top-[-10%] right-[-10%] w-96 h-96 bg-yellow-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+            <div class="absolute bottom-[-10%] left-[20%] w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+        </div>
+    </div>
+
+    <!-- Map Section (Initially Hidden) -->
+    <div id="map-section" class="hidden-section w-full min-h-screen relative bg-slate-50 flex flex-col">
+        <!-- Header for Map View -->
+        <header class="bg-white shadow-md p-4 sticky top-0 z-50 flex flex-col gap-4">
+            
+            <!-- Top Row: Logo & Brand -->
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity" onclick="location.reload()">
+                     <img src="./assets/logo.jpg" alt="Logo Small" class="w-12 h-12 rounded-full border-2 border-slate-100 shadow-sm">
+                     <div class="leading-tight">
+                         <h2 class="font-bold text-xl text-brand-blue">Visita San Cris</h2>
+                         <p class="text-xs text-slate-500">Directorio Turístico</p>
+                     </div>
+                </div>
+            </div>
+
+            <!-- Middle Row: Search Bar (Full Width) -->
+            <div class="w-full relative">
+                 <input type="text" id="header-search" placeholder="Busca restaurantes, parques, museos..." 
+                    class="w-full py-3 px-5 rounded-xl border border-slate-300 bg-slate-50 text-base focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 focus:outline-none shadow-sm transition-all">
+                 <div class="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                 </div>
+            </div>
+
+            <!-- Bottom Row: Categories -->
+            <div class="w-full overflow-x-auto hide-scrollbar pb-1">
+                <div class="flex gap-2 min-w-max">
+                    <button class="category-filter px-5 py-2 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-brand-blue transition-all shadow-sm text-sm font-medium flex items-center gap-2 group aria-pressed:bg-brand-blue aria-pressed:text-white" data-cat="all">
+                        <span>🏷️</span> Todo
+                    </button>
+                    <button class="category-filter px-5 py-2 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-brand-blue transition-all shadow-sm text-sm font-medium flex items-center gap-2 group" data-cat="restaurant">
+                        <span>🍽️</span> Restaurantes
+                    </button>
+                    <button class="category-filter px-5 py-2 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-brand-blue transition-all shadow-sm text-sm font-medium flex items-center gap-2 group" data-cat="park">
+                        <span>🌳</span> Parques
+                    </button>
+                    <button class="category-filter px-5 py-2 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-brand-blue transition-all shadow-sm text-sm font-medium flex items-center gap-2 group" data-cat="museum">
+                        <span>🏛️</span> Museos
+                    </button>
+                     <button class="category-filter px-5 py-2 rounded-full bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-brand-blue transition-all shadow-sm text-sm font-medium flex items-center gap-2 group" data-cat="shop">
+                        <span>🛍️</span> Tiendas
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex flex-col-reverse md:flex-row flex-grow overflow-hidden relative z-0">
+            <!-- Cards List (Side Panel) -->
+            <div class="w-full md:w-96 flex-shrink-0 flex flex-col bg-white border-r border-slate-200 shadow-xl z-20">
+                
+                <!-- Scrollable Content -->
+                <div class="flex-grow overflow-y-auto p-4" id="results-panel">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-slate-800">Resultados (<span id="result-count">0</span>)</h3>
+                        <span class="text-xs text-slate-400">Radio de 2km</span>
+                    </div>
+                    <div id="cards-container" class="space-y-4">
+                        <!-- Cards will be injected here -->
+                        <div class="p-8 text-center text-slate-400 flex flex-col items-center">
+                            <div class="animate-pulse mb-2">🔍</div>
+                             Realiza una búsqueda...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <footer class="bg-slate-50 p-4 border-t border-slate-200 text-xs text-slate-500">
+                    <div class="flex flex-col gap-2 text-center">
+                        <div class="flex justify-center gap-4">
+                            <a href="#" class="hover:text-brand-blue transition-colors">Política de Privacidad</a>
+                            <span class="text-slate-300">|</span>
+                            <a href="#" class="hover:text-brand-blue transition-colors">Términos de Uso</a>
+                        </div>
+                        <div class="flex justify-center gap-4 mt-2">
+                             <a href="#" class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:border-brand-blue hover:text-brand-blue transition-all">FB</a>
+                             <a href="#" class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:border-brand-blue hover:text-brand-blue transition-all">IG</a>
+                             <a href="#" class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:border-brand-blue hover:text-brand-blue transition-all">X</a>
+                        </div>
+                        <p class="mt-2">© 2024 Visita San Cris.</p>
+                    </div>
+                </footer>
+            </div>
+            
+            <!-- Map Container -->
+            <div class="flex-grow h-1/2 md:h-auto relative">
+                <div id="map" class="h-full w-full"></div>
+                <!-- Loading Overlay -->
+                <div id="map-loader" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-[1000] flex flex-col items-center justify-center hidden">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-blue mb-4"></div>
+                    <p class="text-brand-blue font-medium animate-pulse">Obteniendo tu ubicación...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="./js/main.js"></script>
+</body>
+</html>
