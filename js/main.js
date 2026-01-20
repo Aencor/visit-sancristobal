@@ -5,6 +5,26 @@ $(document).ready(function () {
   let markers = [];
   let allPlaces = []; // To store generated places
 
+  // --- Theme Management ---
+  const applyTheme = (theme) => {
+    if (theme === 'dark') {
+      $('html').addClass('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      $('html').removeClass('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
+
+  // Initial theme check
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  applyTheme(savedTheme);
+
+  $('#theme-toggle').on('click', function () {
+    const isDark = $('html').hasClass('dark');
+    applyTheme(isDark ? 'light' : 'dark');
+  });
+
   // --- Mock Data Generator ---
   const generateMockPlaces = (lat, lng, count = 15) => {
     const categories = ['restaurant', 'park', 'museum', 'shop'];
@@ -218,7 +238,15 @@ $(document).ready(function () {
                         <img src="${place.image}" class="w-full h-32 object-cover rounded-t-lg mb-2" alt="${place.name}">
                         <h3 class="font-bold text-lg text-brand-blue leading-tight">${place.name}</h3>
                         <div class="text-xs font-semibold text-slate-500 uppercase mb-1">${place.category}</div>
-                        <p class="text-sm text-slate-600 line-clamp-3">${place.description}</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-3 mb-3">${place.description}</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button class="bg-brand-blue text-white text-[10px] font-bold py-2 rounded-lg hover:bg-blue-800 transition-colors btn-more-info" data-id="${place.id}">
+                                Conoce más
+                            </button>
+                            <button class="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-bold py-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors btn-directions" data-name="${place.name}">
+                                Cómo llegar
+                            </button>
+                        </div>
                     </div>
                 `, {
           maxWidth: 250,
@@ -230,21 +258,31 @@ $(document).ready(function () {
 
       // Add Card to List
       const card = `
-                <div class="flex-shrink-0 w-[85vw] md:w-full bg-white p-4 rounded-xl shadow-lg md:shadow-sm border border-slate-200 md:border-slate-100 hover:shadow-xl transition-all cursor-pointer card-item snap-center" data-id="${place.id}">
+                <div class="flex-shrink-0 w-[85vw] md:w-full bg-white dark:bg-slate-800 p-4 rounded-xl shadow-lg md:shadow-sm border border-slate-200 md:border-slate-100 dark:border-slate-700 hover:shadow-xl transition-all cursor-pointer card-item snap-center" data-id="${place.id}">
                     <div class="flex gap-4">
-                        <div class="w-24 h-24 bg-slate-200 rounded-lg overflow-hidden flex-shrink-0 relative">
+                        <div class="w-24 h-24 bg-slate-200 dark:bg-slate-700 rounded-lg overflow-hidden flex-shrink-0 relative">
                             <img src="${place.image}" alt="${place.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         </div>
                         <div class="flex-grow min-w-0">
                             <div class="flex justify-between items-start">
-                                <h4 class="font-bold text-brand-blue truncate pr-2">${place.name}</h4>
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 uppercase tracking-wide border border-slate-200">${place.category}</span>
+                                <h4 class="font-bold text-brand-blue dark:text-brand-gold truncate pr-2">${place.name}</h4>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 uppercase tracking-wide border border-slate-200 dark:border-slate-600">${place.category}</span>
                             </div>
-                            <p class="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">${place.description}</p>
-                            <div class="mt-2 flex items-center text-xs text-brand-gold font-medium">
-                                <span>★ 4.8</span>
-                                <span class="mx-1 text-slate-300">•</span>
-                                <span class="text-slate-400">Abierto ahora</span>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 line-clamp-2 leading-relaxed">${place.description}</p>
+                            <div class="mt-2 flex items-center justify-between">
+                                <div class="flex items-center text-xs text-brand-gold font-medium">
+                                    <span>★ 4.8</span>
+                                    <span class="mx-1 text-slate-300">•</span>
+                                    <span class="text-slate-400">Abierto ahora</span>
+                                </div>
+                                <div class="flex gap-3">
+                                    <button class="text-brand-blue dark:text-brand-gold font-bold text-xs hover:underline btn-directions" data-name="${place.name}">
+                                        Llegar
+                                    </button>
+                                    <button class="text-brand-blue dark:text-brand-gold font-bold text-xs hover:underline btn-more-info" data-id="${place.id}">
+                                        Ver más →
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -254,7 +292,10 @@ $(document).ready(function () {
     });
 
     // Add click event to cards to center map
-    $('.card-item').on('click', function () {
+    $('.card-item').on('click', function (e) {
+      // Don't trigger if "Conoce más" button was clicked
+      if ($(e.target).closest('.btn-more-info').length) return;
+
       const id = $(this).data('id');
       const place = places.find(p => p.id === id);
       if (place) {
@@ -265,6 +306,23 @@ $(document).ready(function () {
           marker.openPopup();
         }
       }
+    });
+
+    // Handle "Conoce más" button clicks (Redirection)
+    $(document).on('click', '.btn-more-info', function (e) {
+      e.stopPropagation();
+      const id = $(this).data('id');
+      // Store the current places in localStorage so the detail page can find it
+      localStorage.setItem('temp_places', JSON.stringify(allPlaces));
+      window.location.href = `location.html?id=${id}`;
+    });
+
+    // Handle "Cómo llegar" button clicks
+    $(document).on('click', '.btn-directions', function (e) {
+      e.stopPropagation();
+      const placeName = $(this).data('name');
+      const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(placeName + " San Cristóbal de las Casas")}`;
+      window.open(url, '_blank');
     });
   }
 

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Locación - Visita San Cris</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-blue': '#1e3a8a',
+                        'brand-gold': '#d97706',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
+
+    <!-- Theme Toggle -->
+    <button id="theme-toggle" class="fixed top-4 right-20 z-[1001] p-3 rounded-full bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 hover:scale-110 transition-all">
+        <span class="dark:hidden">🌙</span>
+        <span class="hidden dark:inline">☀️</span>
+    </button>
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-40 p-4 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <button onclick="window.location.href='index.html'" class="flex items-center gap-2 bg-white/90 dark:bg-slate-800/90 hover:bg-white dark:hover:bg-slate-800 text-brand-blue dark:text-brand-gold font-semibold py-2 px-4 rounded-full shadow-lg transition-all border border-slate-200 dark:border-slate-700 group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Regresar al Mapa
+            </button>
+            <div class="bg-white/90 dark:bg-slate-800/90 p-2 rounded-full shadow-lg border border-slate-200 dark:border-slate-700">
+                <img src="./assets/logo.jpg" alt="Logo" class="w-10 h-10 rounded-full">
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative h-[60vh] md:h-[70vh] w-full overflow-hidden">
+        <img id="location-hero-image" src="" alt="Hero Image" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-8 md:p-16 max-w-7xl mx-auto">
+            <span id="location-category" class="inline-block px-3 py-1 rounded-full bg-brand-gold text-white text-xs font-bold uppercase tracking-wider mb-4 shadow-lg">Categoría</span>
+            <h1 id="location-name" class="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-md">Cargando...</h1>
+            <div class="flex items-center text-white/90 gap-6">
+                <div class="flex items-center gap-1">
+                    <span class="text-xl text-yellow-400">★</span>
+                    <span class="font-semibold text-lg">4.8</span>
+                    <span class="text-sm opacity-70">(120 reseñas)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                    <span class="font-medium">Abierto ahora</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Content Section -->
+    <main class="max-w-7xl mx-auto px-6 py-12 md:py-20 grid grid-cols-1 md:grid-cols-3 gap-12">
+        
+        <!-- Left Column: Details -->
+        <article class="md:col-span-2 space-y-12">
+            <section>
+                <h2 class="text-2xl font-bold text-brand-blue dark:text-brand-gold mb-6 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Acerca de este lugar
+                </h2>
+                <p id="location-description" class="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+                    Estamos cargando los detalles, por favor espera...
+                </p>
+            </section>
+
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow">
+                    <h3 class="font-bold text-brand-blue dark:text-brand-gold mb-4 flex items-center gap-2">
+                        <span>🕒</span> Horarios
+                    </h3>
+                    <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+                        <li class="flex justify-between"><span>Lunes - Viernes</span> <span class="font-semibold text-slate-800 dark:text-slate-200">09:00 - 20:00</span></li>
+                        <li class="flex justify-between"><span>Sábados</span> <span class="font-semibold text-slate-800 dark:text-slate-200">10:00 - 18:00</span></li>
+                        <li class="flex justify-between text-brand-gold font-bold"><span>Domingos</span> <span>Cerrado</span></li>
+                    </ul>
+                 </div>
+                 <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow">
+                    <h3 class="font-bold text-brand-blue dark:text-brand-gold mb-4 flex items-center gap-2">
+                        <span>📍</span> Ubicación
+                    </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Real de Guadalupe #123, Centro Histórico, San Cristóbal de las Casas, Chiapas.</p>
+                    <button id="btn-directions-main" class="w-full bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold py-2 rounded-xl transition-colors text-sm flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Ver en Google Maps
+                    </button>
+                 </div>
+            </section>
+
+            <!-- Gallery (Mock) -->
+            <section>
+                <h2 class="text-2xl font-bold text-brand-blue dark:text-brand-gold mb-6">Galería de fotos</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 h-96">
+                    <div class="bg-slate-200 dark:bg-slate-700 rounded-2xl overflow-hidden row-span-2">
+                        <img src="https://loremflickr.com/600/800/sancristobal?random=1" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" alt="Gallery 1">
+                    </div>
+                    <div class="bg-slate-200 dark:bg-slate-700 rounded-2xl overflow-hidden">
+                        <img src="https://loremflickr.com/600/400/sancristobal?random=2" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" alt="Gallery 2">
+                    </div>
+                    <div class="bg-slate-200 dark:bg-slate-700 rounded-2xl overflow-hidden">
+                        <img src="https://loremflickr.com/600/400/sancristobal?random=3" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" alt="Gallery 3">
+                    </div>
+                    <div class="bg-slate-200 dark:bg-slate-700 rounded-2xl overflow-hidden col-span-2">
+                        <img src="https://loremflickr.com/800/400/sancristobal?random=4" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" alt="Gallery 4">
+                    </div>
+                </div>
+            </section>
+        </article>
+
+        <!-- Right Column: Sidebar -->
+        <aside class="space-y-8">
+            <!-- Action Card -->
+            <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 sticky top-24">
+                <h3 class="text-xl font-bold text-brand-blue dark:text-brand-gold mb-6 text-center">Planifica tu visita</h3>
+                <div class="space-y-4">
+                    <button class="w-full bg-brand-blue dark:bg-brand-gold hover:bg-blue-800 dark:hover:bg-amber-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-brand-blue/30 dark:shadow-brand-gold/20 transition-all flex items-center justify-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Reservar ahora
+                    </button>
+                    <button id="btn-directions-sidebar" class="w-full bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 text-brand-blue dark:text-brand-gold border-2 border-brand-blue/10 dark:border-brand-gold/10 font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-3">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Cómo llegar
+                    </button>
+                </div>
+
+                <hr class="my-8 border-slate-100 dark:border-slate-700">
+
+                <div class="space-y-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-brand-blue dark:text-brand-gold flex-shrink-0">
+                            📧
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Email</p>
+                            <p class="text-slate-700 dark:text-slate-300 font-medium">contacto@visisancris.com</p>
+                        </div>
+                    </div>
+                     <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-yellow-50 dark:bg-yellow-900/30 flex items-center justify-center text-brand-gold flex-shrink-0">
+                            🌐
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Sitio Web</p>
+                            <a href="#" class="text-brand-blue dark:text-brand-gold font-medium hover:underline">www.sitio-oficial.com</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QR Area -->
+                <div class="mt-8 p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl text-center">
+                    <p class="text-xs text-slate-500 mb-3">Escanea para abrir en tu celular</p>
+                    <div class="w-32 h-32 bg-white dark:bg-slate-800 mx-auto border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center p-2">
+                         <!-- Placeholder for QR -->
+                         <div class="w-full h-full bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center">
+                            <span class="text-xs text-slate-400 font-bold">QR</span>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-blue dark:bg-slate-950 text-white py-12">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="flex items-center gap-4">
+                <img src="./assets/logo.jpg" alt="Logo" class="w-12 h-12 rounded-full ring-2 ring-white/20 dark:ring-slate-700">
+                <div>
+                     <h3 class="font-bold text-xl uppercase tracking-tighter text-white dark:text-brand-gold">Visita San Cris</h3>
+                     <p class="text-white/60 dark:text-slate-500 text-xs text-center">© 2024 Directorio Turístico</p>
+                </div>
+            </div>
+            <div class="flex gap-6">
+                <a href="#" class="hover:text-brand-gold transition-colors">Instagram</a>
+                <a href="#" class="hover:text-brand-gold transition-colors">Facebook</a>
+                <a href="#" class="hover:text-brand-gold transition-colors">TikTok</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="./js/location.js"></script>
+    <script>
+        // Navbar animation on scroll
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 50) {
+                $('#navbar').addClass('glass-effect p-2').removeClass('p-4');
+            } else {
+                $('#navbar').removeClass('glass-effect p-2').addClass('p-4');
+            }
+        });
+    </script>
+</body>
+</html>
