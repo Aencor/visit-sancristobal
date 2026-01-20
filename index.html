@@ -45,6 +45,30 @@
             align-items: center;
             justify-content: center;
         }
+
+        /* Leaflet Popup overrides */
+        .custom-popup .leaflet-popup-content-wrapper {
+            padding: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+        }
+        .dark .custom-popup .leaflet-popup-content-wrapper {
+            background: rgba(30, 41, 59, 0.95);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .custom-popup .leaflet-popup-content {
+            margin: 0;
+            width: 250px !important;
+        }
+        .custom-popup .leaflet-popup-tip {
+            background: rgba(255, 255, 255, 0.95);
+        }
+        .dark .custom-popup .leaflet-popup-tip {
+            background: rgba(30, 41, 59, 0.95);
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 overflow-x-hidden dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
@@ -144,6 +168,12 @@
             <!-- Map Container (Mobile: Full Screen Background, Desktop: Right Panel) -->
             <div class="absolute inset-0 md:relative md:flex-grow md:w-auto z-0 bg-slate-100 dark:bg-slate-800">
                 <div id="map" class="h-full w-full"></div>
+                
+                <!-- Events List Overlay -->
+                <div id="events-container" class="absolute bottom-6 right-6 z-[1000] w-72 md:w-80 pointer-events-auto flex flex-col gap-3">
+                    <!-- Events will be injected here -->
+                </div>
+
                 <!-- Loading Overlay -->
                 <div id="map-loader" class="absolute inset-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm z-[1000] flex flex-col items-center justify-center hidden">
                     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-blue dark:border-brand-gold mb-4"></div>

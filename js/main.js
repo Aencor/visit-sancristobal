@@ -27,16 +27,14 @@ $(document).ready(function () {
 
   // --- Mock Data Generator ---
   const generateMockPlaces = (lat, lng, count = 15) => {
+    // ... (existing code remains same)
     const categories = ['restaurant', 'park', 'museum', 'shop'];
     const places = [];
 
     for (let i = 0; i < count; i++) {
-      // Random offset within ~2km (approx 0.018 degrees)
       const latOffset = (Math.random() - 0.5) * 0.036;
       const lngOffset = (Math.random() - 0.5) * 0.036;
-
       const category = categories[Math.floor(Math.random() * categories.length)];
-
       places.push({
         id: i,
         name: `Lugar Mock ${category} ${i + 1}`,
@@ -44,10 +42,19 @@ $(document).ready(function () {
         lat: lat + latOffset,
         lng: lng + lngOffset,
         description: `Descripción breve del ${category} número ${i + 1}. Un lugar excelente para visitar en San Cris.`,
-        image: `https://loremflickr.com/320/240/${category},san-cristobal?random=${i}` // Random image by category
+        image: `https://loremflickr.com/320/240/${category},san-cristobal?random=${i}`
       });
     }
     return places;
+  };
+
+  const generateMockEvents = () => {
+    return [
+      { id: 1, name: "Concierto de Marimba", date: "20 Ene, 19:00", place: "Plaza de la Paz" },
+      { id: 2, name: "Feria del Ámbar", date: "25 Ene, 10:00", place: "Musac" },
+      { id: 3, name: "Noche de Leyendas", date: "02 Feb, 21:00", place: "Andador Guadalupe" },
+      { id: 4, name: "Taller de Textiles", date: "10 Feb, 16:00", place: "Casa del Jade" }
+    ];
   };
 
   // --- GSAP Animations ---
@@ -134,14 +141,12 @@ $(document).ready(function () {
 
         $("#map-loader").addClass('hidden');
         renderMap(userPosition);
-
-        // Fetch mock data based on location
         allPlaces = generateMockPlaces(userPosition.lat, userPosition.lng);
-
-        // Filter if query exists (simple mock text filter) or show all
         renderPlaces(allPlaces);
+        renderEventsList();
       },
       (error) => {
+        // ... (error handling remains same)
         $("#map-loader").addClass('hidden');
         console.error("Error getting location: ", error);
 
@@ -149,14 +154,13 @@ $(document).ready(function () {
         if (error.code === error.TIMEOUT) msg = "La solicitud de ubicación tardó demasiado.";
         if (error.code === error.PERMISSION_DENIED) msg = "Permiso de ubicación denegado.";
 
-        // Default to San Cristobal de las Casas
-        // San Cris Coords: 16.7370, -92.6376
         userPosition = { lat: 16.7371, lng: -92.6376 };
         alert(`${msg} Mostrando San Cristóbal de las Casas por defecto.`);
 
         renderMap(userPosition);
         allPlaces = generateMockPlaces(userPosition.lat, userPosition.lng);
         renderPlaces(allPlaces);
+        renderEventsList();
       },
       {
         enableHighAccuracy: true,
@@ -182,7 +186,8 @@ $(document).ready(function () {
       className: 'custom-div-icon',
       html: '<div style="background-color: #3b82f6; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.3);"></div>',
       iconSize: [24, 24],
-      iconAnchor: [12, 12]
+      iconAnchor: [12, 12],
+      popupAnchor: [0, -15]
     });
 
     L.marker([center.lat, center.lng], { icon: userIcon }).addTo(map)
@@ -223,7 +228,7 @@ $(document).ready(function () {
         html: `<div class="flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-lg border-2 border-brand-blue text-xl">${emojis[category] || '📍'}</div>`,
         iconSize: [40, 40],
         iconAnchor: [20, 40],
-        popupAnchor: [0, -45]
+        popupAnchor: [0, -60]
       });
     };
 
@@ -347,5 +352,51 @@ $(document).ready(function () {
       p.category.toLowerCase().includes(lowerText)
     );
     renderPlaces(filtered);
+  }
+
+  function renderEventsList() {
+    const events = generateMockEvents();
+    const container = $('#events-container');
+    container.empty();
+
+    // Add "HOY" Header
+    container.append(`
+      <div class="mb-1 pointer-events-none">
+        <h3 class="text-3xl font-black text-brand-gold drop-shadow-md italic uppercase tracking-tighter">HOY</h3>
+      </div>
+    `);
+
+    events.slice(0, 3).forEach((event, index) => {
+      const card = `
+        <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md p-3 rounded-xl shadow-xl border border-white/20 dark:border-slate-700/50 transform transition-all duration-300 hover:translate-x-1 cursor-pointer event-card opacity-0">
+          <div class="flex items-center gap-3">
+            <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-brand-gold/10 dark:bg-brand-gold/20 flex flex-col items-center justify-center text-brand-gold">
+               <span class="text-[10px] font-bold uppercase leading-none">${event.date.split(' ')[1]}</span>
+               <span class="text-lg font-black leading-none">${event.date.split(' ')[0]}</span>
+            </div>
+            <div class="flex-grow min-w-0">
+              <h4 class="font-bold text-brand-blue dark:text-white text-sm truncate uppercase tracking-tight">${event.name}</h4>
+              <div class="flex items-center gap-2 text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                <span class="opacity-70">🕒 ${event.date.split(', ')[1]}</span>
+                <span class="opacity-30">•</span>
+                <span class="truncate">📍 ${event.place}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      const $card = $(card);
+      container.append($card);
+
+      // Staggered entry animation
+      gsap.to($card, {
+        opacity: 1,
+        x: 0,
+        from: { x: 20 },
+        delay: index * 0.15,
+        duration: 0.6,
+        ease: "power2.out"
+      });
+    });
   }
 });
